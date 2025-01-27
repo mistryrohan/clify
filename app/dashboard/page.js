@@ -1,7 +1,8 @@
 'use client'
 
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
+import { Button, Radio, RadioGroup, FormControlLabel } from "@mui/material";
 
 // TODO include a logout here, onClick={() => signOut()}
 // TODO allow user to have a limit filter (min 1)
@@ -20,7 +21,7 @@ export default function Dashboard() {
 
             const res = await fetch(url, {
                 headers: {
-                    Authorization: `Bearer ${session.accessToken}`,
+                    Authorization: `Bearer ${session.accessToken}`, // TODO wait for session is loading
                 },
             });
 
@@ -45,9 +46,14 @@ export default function Dashboard() {
         <div style={{ padding: "20px" }}>
           <h1>Your Top {viewArtists ? "Artists" : "Songs"}</h1>
 
-          <button onClick={() => setViewArtists(prev => !prev)} style={{ marginRight: "10px" }}>
+          <Button
+            variant="contained"
+            onClick={() => setViewArtists(prev => !prev)}
+            style={{ marginBottom: 16 }}
+          >
             Switch to {viewArtists ? "Artists" : "Songs"}
-          </button>
+          </Button>
+
     
           <select
             value={timeRange}
