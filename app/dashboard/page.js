@@ -1,31 +1,33 @@
 'use client'
 
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation"
 import { useState, useEffect, useRef } from "react";
 import { Button, ButtonGroup, TextField } from "@mui/material";
 import html2canvas from "html2canvas";
 
-const typeCli = (line, setCurrentLine, addTypedLine, speed = 40) => {
-  return new Promise((resolve) => {
-    let i = 0;
-    const typed = `$ ${line}`;
+// const typeCli = (line, setCurrentLine, addTypedLine, speed = 40) => {
+//   return new Promise((resolve) => {
+//     let i = 0;
+//     const typed = `$ ${line}`;
     
-    // Type out the interval one character at a time
-    const intervalId = setInterval(() => {
-      i++;
-      setCurrentLine(typed.slice(0, i));
-      if (i >= typed.length) {
-        clearInterval(intervalId);
-        addTypedLine(typed);
-        setCurrentLine("");
-        resolve();
-      }
+//     // Type out the interval one character at a time
+//     const intervalId = setInterval(() => {
+//       i++;
+//       setCurrentLine(typed.slice(0, i));
+//       if (i >= typed.length) {
+//         clearInterval(intervalId);
+//         addTypedLine(typed);
+//         setCurrentLine("");
+//         resolve();
+//       }
 
-    }, speed);
-  })
-};
+//     }, speed);
+//   })
+// };
 
 export default function Dashboard() {
+    const router = useRouter();
     const { data: session, status } = useSession();
 
     const [topItems, setTopItems] = useState([]);
@@ -39,6 +41,7 @@ export default function Dashboard() {
 
     const prevTypeRef = useRef(viewArtists ? 'artists' : 'songs');
     const prevRangeRef = useRef(timeRange);
+    const terminalRef = useRef(null);
 
     useEffect(() => {
         const fetchTopItems = async () => {
@@ -74,7 +77,8 @@ export default function Dashboard() {
     }
 
     if (!session) {
-        redirect("/");
+        router.push("/");
+        return null;
     }
 
     const username = session?.user?.name || "username";
@@ -89,12 +93,31 @@ export default function Dashboard() {
       return ranges[range] ?? range;
     }
 
+    const handleDownloadTerminal = async () => {
+      if (!terminalRef.current) {
+        return;
+      }
+
+      try {
+        const canvas = await html2canvas(terminalRef.current);
+        const dataUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = 'terminal.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error("Error capturing terminal:", error);
+      }
+    }
+
     return (
         <div className="min-h-screen w-full bg-gray-800 text-gray-100 font-mono flex items-center justify-center p-4">
           
           {/* Main inner formatting */}
           <div className="flex flex-col md:flex-row gap-12 max-w-5xl w-full mx-auto">
-            <div className="bg-black w-full md:w-1/2 rounded-md overflow-hidden border border-gray-700 shadow-lg">
+            <div ref={terminalRef} className="bg-black w-full md:w-1/2 rounded-md overflow-hidden border border-gray-700 shadow-lg">
               <div className="bg-gray-800 px-3 py-2 flex justify-between items-center">
                 <span className="font-bold">cli-fy</span>
                 <div className="space-x-2">
@@ -187,6 +210,12 @@ export default function Dashboard() {
                     year
                   </Button>
                 </ButtonGroup>
+              </div>
+
+              <div>
+                <Button variant="contained" onClick={handleDownloadTerminal} sx={{ textTransform: "none", minWidth: "auto", marginTop: 4 }}>
+                   download terminal
+                </Button>
               </div>
             </div>
           </div>
