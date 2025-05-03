@@ -6,26 +6,6 @@ import { useState, useEffect, useRef } from "react";
 import { Button, ButtonGroup, TextField } from "@mui/material";
 import html2canvas from "html2canvas";
 
-// const typeCli = (line, setCurrentLine, addTypedLine, speed = 40) => {
-//   return new Promise((resolve) => {
-//     let i = 0;
-//     const typed = `$ ${line}`;
-    
-//     // Type out the interval one character at a time
-//     const intervalId = setInterval(() => {
-//       i++;
-//       setCurrentLine(typed.slice(0, i));
-//       if (i >= typed.length) {
-//         clearInterval(intervalId);
-//         addTypedLine(typed);
-//         setCurrentLine("");
-//         resolve();
-//       }
-
-//     }, speed);
-//   })
-// };
-
 export default function Dashboard() {
     const router = useRouter();
     const { data: session, status } = useSession();
@@ -35,12 +15,6 @@ export default function Dashboard() {
     const [viewArtists, setViewArtists] = useState(true); 
     const [limit, setLimit] = useState(5);
 
-    const [typedlines, setTypedLines] = useState([]);
-    const [currentLine, setCurrentLine] = useState("");
-    const [showResults, setShowResults] = useState (false);
-
-    const prevTypeRef = useRef(viewArtists ? 'artists' : 'songs');
-    const prevRangeRef = useRef(timeRange);
     const terminalRef = useRef(null);
 
     useEffect(() => {
@@ -133,7 +107,7 @@ export default function Dashboard() {
 
                 <ul className="list-none space-y-2">
                   {topItems.map((item, index) => (
-                    <li key={item.id}>
+                    <li key={item.id ?? index}>
                       <strong>
                         {index + 1}. {item.name}
                       </strong>
@@ -219,7 +193,45 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-          
-        </div>   
+
+          <footer className="fixed bottom-0 left-0 w-full bg-gray-800 bg-opacity-80 py-3 flex justify-center gap-8">
+            <a
+              href="https://www.rohanmistry.tech"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transform hover:scale-110 transition-transform"
+            >
+              <img
+                src="WebsiteIcon.png"
+                alt="Website"
+                className="w-10 h-10 md:w-12 md:h-12"
+              />
+            </a>
+            <a
+              href="https://www.linkedin.com/in/mistry-rohan/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transform hover:scale-110 transition-transform"
+            >
+              <img
+                src="/LinkedInIcon.png"
+                alt="LinkedIn"
+                className="w-10 h-10 md:w-12 md:h-12"
+              />
+            </a>
+            <a
+              href="https://github.com/mistryrohan"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transform hover:scale-110 transition-transform"
+            >
+              <img
+                src="/GithubIcon.png"
+                alt="Github"
+                className="w-10 h-10 md:w-12 md:h-12"
+              />
+            </a>
+          </footer>
+        </div>  
       );
 }
