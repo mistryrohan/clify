@@ -31,7 +31,7 @@ export default function Home() {
           </div>
         </div>
 
-        <footer className="fixed bottom-0 left-0 w-full bg-gray-900 bg-opacity-80 py-3 flex justify-center gap-8">
+        <footer className="fixed bottom-0 left-0 w-full py-3 flex justify-center gap-8">
             <a
               href="https://www.rohanmistry.tech"
               target="_blank"
